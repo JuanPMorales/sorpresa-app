@@ -43,6 +43,8 @@ if 'actividad_elegida' not in st.session_state:
     st.session_state.actividad_elegida = ""
 if 'es_salida' not in st.session_state:
     st.session_state.es_salida = False
+if 'hora_personalizada' not in st.session_state:
+    st.session_state.hora_personalizada = False
 
 # ==========================================
 # PANTALLA 1: LOGIN
@@ -122,11 +124,35 @@ elif st.session_state.pantalla == 3:
         )
         
         st.markdown("<h3 class='centrado'>¿A qué hora? ⏰</h3>", unsafe_allow_html=True)
-        hora = st.radio(
+        
+        opciones_hora = ["5pm", "6pm", "7pm", "8pm", "9pm", "🕐 Otra hora"]
+        hora_seleccionada = st.radio(
             "",
-            ["5pm", "6pm", "7pm", "8pm", "9pm"],
+            opciones_hora,
             label_visibility="collapsed"
         )
+        
+        # Si selecciona "Otra hora", mostrar inputs personalizados
+        if hora_seleccionada == "🕐 Otra hora":
+            col_hora, col_am_pm = st.columns([1, 1])
+            with col_hora:
+                hora_num = st.number_input(
+                    "Hora:",
+                    min_value=1,
+                    max_value=12,
+                    value=7,
+                    step=1
+                )
+            with col_am_pm:
+                periodo = st.radio(
+                    "Período:",
+                    ["AM", "PM"],
+                    horizontal=True,
+                    label_visibility="collapsed"
+                )
+            hora = f"{int(hora_num)}{periodo}"
+        else:
+            hora = hora_seleccionada
         
         st.markdown("<br>", unsafe_allow_html=True)
         if st.button("Confirmar", use_container_width=True):
